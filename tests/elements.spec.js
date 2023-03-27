@@ -30,7 +30,7 @@ test.describe('Elements', ()=>{
         await expect(page.getByText('Yes').first()).toBeChecked();
     })
 
-    test.only('web table', async ({page})=>{
+    test('web table', async ({page})=>{
         await page.goto(`${baseURL}/webtables`)
         await page.locator('#addNewRecordButton').click();
         await page.locator('#firstName').fill('Test')
@@ -42,4 +42,44 @@ test.describe('Elements', ()=>{
         await page.locator('#submit').click()
         await expect(page.getByText('Test')).toBeVisible
     })
+
+    test('buttons', async ({page})=>{
+        await page.goto(`${baseURL}/buttons`)
+        await page.locator('#doubleClickBtn').dblclick();
+        await page.locator('#rightClickBtn').click({button:'right'})
+        await page.getByRole('button', {name: 'Click Me', exact:true}).click()
+        await expect(page.locator('doubleClickMessage')).toBeVisible
+        await expect(page.locator('rightClickMessage')).toBeVisible
+        await expect(page.locator('dynamicClickMessage')).toBeVisible
+    })
+
+    test('links', async ({browser})=>{
+        //open link in a new tab
+        const context = await browser.newContext()
+        const page = await context.newPage()
+        await page.goto('https://demoqa.com/links')
+        const newTabLink = page.locator('#simpleLink')
+
+        const newPage = await Promise.all([
+            context.waitForEvent('page'),
+            newTabLink.click()
+        ])
+        await expect(newPage).toHaveTitle('DEMOQA')
+    })
+
+    test('upload & download a file', async ({page})=>{
+        const fs = require('fs');
+        await page.goto(`${baseURL}/upload-download`)
+        await page.locator('#uploadFile').click();
+        await page.locator('#uploadFile').setInputFiles('./files/sampleFile.jpeg');
+
+        const downloadPromise = page.waitForEvent('download');
+        await page.locator('#downloadButton').click();
+        const download = await downloadPromise;
+        console.log(await download.path());
+        const suggestedFileName = download.suggestedFilename()
+        const filePath = 'files/' + suggestedFileName
+        await download.saveAs(filePath)
+        expect(fs.existsSync(filePath)).toBeTruthy()
+        })
 })
