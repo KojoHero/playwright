@@ -60,7 +60,7 @@ test.describe('Elements', ()=>{
         await page.goto('https://demoqa.com/links')
         const newTabLink = page.locator('#simpleLink')
 
-        const newPage = await Promise.all([
+        const [newPage] = await Promise.all([
             context.waitForEvent('page'),
             newTabLink.click()
         ])
