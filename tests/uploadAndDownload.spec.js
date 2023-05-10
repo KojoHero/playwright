@@ -1,3 +1,6 @@
+const {expect,test} = require('@playwright/test')
+const baseURL = 'https://demoqa.com'
+
 test.describe('Elements - Upload and Download', ()=>{
     test('upload & download a file', async ({page})=>{
         const fs = require('fs');

@@ -1,3 +1,5 @@
+const {expect,test} = require('@playwright/test')
+
 test.describe('Elements', ()=>{
     test('text box', async({page})=>{
         await page.goto('https://demoqa.com/text-box')

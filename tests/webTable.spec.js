@@ -1,3 +1,6 @@
+const {expect,test} = require('@playwright/test')
+const baseURL = 'https://demoqa.com'
+
 test.describe('Elements', ()=>{
     test('web table', async ({page})=>{
         await page.goto(`${baseURL}/webtables`)
